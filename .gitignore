@@ -1,0 +1,19 @@
+# Python
+.env
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+*.js.map
+
+# Docker / OS
+.DS_Store
+Thumbs.db
+*.log
