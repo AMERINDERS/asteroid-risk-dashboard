@@ -1,0 +1,38 @@
+### Asteroid Risk Dashboard — REST Client requests
+### Install: VS Code extension "REST Client" by Huachao Mao
+### Usage: click "Send Request" above each block
+
+@baseUrl = http://localhost:8000
+
+# ── Health ────────────────────────────────────────────────────────────────────
+
+### Health check — should return {status: ok}
+GET {{baseUrl}}/
+
+# ── Core endpoints ────────────────────────────────────────────────────────────
+
+### Threat feed — asteroids sorted by risk_score DESC (next 30 days)
+GET {{baseUrl}}/api/feed
+
+### Dashboard stats — totals, closest this week, avg risk
+GET {{baseUrl}}/api/stats
+
+### Historical — monthly flyby counts + avg risk (last 12 months)
+GET {{baseUrl}}/api/historical
+
+# ── Asteroid detail ───────────────────────────────────────────────────────────
+
+### Asteroid detail — replace ID with a real neo_reference_id from /api/feed
+GET {{baseUrl}}/api/asteroids/54376661
+
+### 404 test — unknown ID should return 404 with error message
+GET {{baseUrl}}/api/asteroids/FAKE_ID_DOES_NOT_EXIST
+
+# ── Cesium trajectory ─────────────────────────────────────────────────────────
+
+### Trajectory — 100 sampled orbital positions for CesiumJS
+GET {{baseUrl}}/api/asteroids/54376661/trajectory
+
+# ── Swagger UI ────────────────────────────────────────────────────────────────
+### Open in browser: http://localhost:8000/docs
+### Open in browser: http://localhost:8000/redoc
