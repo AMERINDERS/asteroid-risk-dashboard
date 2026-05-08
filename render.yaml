@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: asteroid-risk-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # set manually in Render dashboard to NEON_DATABASE_URL value
+      - key: REDIS_URL
+        sync: false          # set manually — or omit (Redis cache degrades gracefully)
+      - key: NASA_API_KEY
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_DEFAULT_REGION
+        value: us-east-1
+      - key: FRONTEND_URL
+        sync: false          # set to Angular frontend URL once deployed

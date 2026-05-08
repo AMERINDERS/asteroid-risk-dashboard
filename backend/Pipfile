@@ -11,13 +11,14 @@ psycopg2-binary = "*"
 requests = "*"
 boto3 = "*"
 python-dotenv = "*"
+redis = "*"
 
 [dev-packages]
 pytest = "*"
 pytest-cov = "*"
 flake8 = "*"
 black = "*"
+httpx = "*"
 
 [requires]
 python_version = "3.11"
-python_full_version = "3.11.3"
