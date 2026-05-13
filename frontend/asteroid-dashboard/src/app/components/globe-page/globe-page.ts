@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { SpaceMapComponent } from '../space-map/space-map';
 import { DetailPanelComponent } from '../detail-panel/detail-panel';
 
@@ -50,8 +50,19 @@ import { DetailPanelComponent } from '../detail-panel/detail-panel';
     }
   `],
 })
-export class GlobePageComponent {
+export class GlobePageComponent implements OnInit, OnDestroy {
   selectedId = signal<string | null>(null);
+
+  ngOnInit(): void {
+    // Apply immediately so .content has padding:0 + overflow:hidden
+    // BEFORE SpaceMapComponent.ngAfterViewInit reads the container size.
+    // NavigationEnd (used by isGlobeView in app.ts) fires too late.
+    document.body.classList.add('globe-active');
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('globe-active');
+  }
 
   onAsteroidSelected(id: string) {
     this.selectedId.set(id);

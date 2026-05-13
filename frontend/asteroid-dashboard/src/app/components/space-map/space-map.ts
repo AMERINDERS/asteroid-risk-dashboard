@@ -145,6 +145,17 @@ export class SpaceMapComponent implements AfterViewInit, OnDestroy {
         scene.skyBox.show = true;
         // Depth-test off — prevents labels/points clipping into the globe surface
         globe.depthTestAgainstTerrain = false;
+
+        // ── Camera controller ─────────────────────────────────────
+        const ctrl = scene.screenSpaceCameraController;
+        // Disable inertia — prevents the camera continuing to zoom after
+        // a scroll/touch event fires on page load (race with layout reflow)
+        ctrl.inertiaZoom = 0;
+        ctrl.inertiaSpin = 0;
+        ctrl.inertiaTranslate = 0;
+        // Clamp zoom so the camera can never zoom past a sensible range
+        ctrl.minimumZoomDistance = 500_000;   // 500 km min
+        ctrl.maximumZoomDistance = 50_000_000; // 50,000 km max
       } catch (_) { /* scene not ready */ }
 
       // Start zoomed out showing Earth clearly

@@ -207,11 +207,20 @@
   padding: var(--space-7);
   background: var(--surface-0);
 
-  // Globe view: zero padding, no scroll — let Cesium own the space
+  // Globe view: zero padding, no scroll — let Cesium own the space.
+  // .globe-view class comes from isGlobeView() signal (slightly delayed).
+  // body.globe-active is set in GlobePageComponent.ngOnInit() which runs
+  // BEFORE SpaceMapComponent.ngAfterViewInit() reads the container size,
+  // so Cesium always sees the correct zero-padding dimensions from init.
   &.globe-view {
     padding: 0;
     overflow: hidden;
   }
+}
+
+body.globe-active .content {
+  padding: 0;
+  overflow: hidden;
 }
 
 // ── Mobile ≤768px ──────────────────────────────────────────────
