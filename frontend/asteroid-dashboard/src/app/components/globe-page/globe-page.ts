@@ -19,10 +19,10 @@ import { DetailPanelComponent } from '../detail-panel/detail-panel';
     </div>
   `,
   styles: [`
-    :host { display: block; height: 100%; }
+    :host { display: block; }
     .globe-layout {
       display: flex;
-      height: 100%;
+      height: calc(100vh - 56px - var(--nav-h, 0px));
       gap: 0;
     }
     .globe-main {

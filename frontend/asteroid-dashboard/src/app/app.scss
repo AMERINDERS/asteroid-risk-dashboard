@@ -1,7 +1,8 @@
 .shell {
+  --nav-h: 0px; // closed by default; .nav-open overrides to 48px
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 56px auto 1fr;
+  grid-template-rows: 56px var(--nav-h) 1fr;
   grid-template-areas:
     "topbar"
     "subnav"
@@ -9,6 +10,10 @@
   height: 100vh;
   background: var(--surface-0);
   overflow: hidden;
+
+  &.nav-open {
+    --nav-h: 48px;
+  }
 }
 
 // ── Topbar ─────────────────────────────────────────────────────
@@ -119,6 +124,8 @@
 }
 
 // ── Collapsible subnav ─────────────────────────────────────────
+// Height is driven by the --nav-h grid row on .shell (0px or 48px).
+// overflow: hidden clips the content when the row collapses to 0.
 .subnav {
   grid-area: subnav;
   display: flex;
@@ -128,11 +135,11 @@
   background: var(--surface-1);
   border-bottom: 1px solid var(--border-1);
   overflow: hidden;
-  max-height: 0;
-  transition: max-height var(--duration-base) var(--ease-out);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
 
   &.open {
-    max-height: 48px;
+    opacity: 1;
   }
 }
 

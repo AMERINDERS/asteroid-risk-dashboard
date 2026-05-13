@@ -1,4 +1,4 @@
-<div class="shell">
+<div class="shell" [class.nav-open]="navOpen()">
   <header class="topbar">
     <div class="topbar-start">
       <button class="hamburger-btn" (click)="navOpen.update(v => !v)" aria-label="Toggle navigation">
