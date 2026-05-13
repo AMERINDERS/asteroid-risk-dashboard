@@ -1,0 +1,40 @@
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/">
+      <span class="brand-mark"></span>
+      <span class="brand-name">AsteroidRisk</span>
+    </a>
+    <div class="topbar-meta">
+      <span class="live-indicator">
+        <span class="live-dot"></span>
+        Live · updated 3 min ago
+      </span>
+      <button class="icon-btn" aria-label="Settings">
+        <lucide-icon [img]="icons.Settings" size="18"></lucide-icon>
+      </button>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <nav>
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+          class="nav-item"
+        >
+          <lucide-icon [name]="item.icon" size="18"></lucide-icon>
+          <span>{{ item.label }}</span>
+          @if (item['badge']) {
+            <span class="nav-badge">{{ item['badge'] }}</span>
+          }
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,92 @@
+.threat-feed {
+  background: var(--surface-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.threat-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+::ng-deep {
+  .threat-table {
+    th {
+      background: var(--surface-2);
+      color: var(--text-secondary);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px solid var(--border-1);
+      font-weight: 500;
+    }
+
+    td {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-1);
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    tr:hover td {
+      background: var(--surface-2);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+  }
+}
+
+.name-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  text-decoration: none;
+  transition: color var(--duration-fast) ease-out;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+// Risk badges — THE ONLY PLACE risk colours appear in the UI
+.risk-badge {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  width: 48px;
+  justify-content: center;
+
+  &.critical {
+    background: rgba(255, 71, 87, 0.15);
+    color: var(--risk-critical);
+  }
+  &.high {
+    background: rgba(255, 168, 50, 0.15);
+    color: var(--risk-high);
+  }
+  &.medium {
+    background: rgba(79, 142, 247, 0.15);
+    color: var(--risk-medium);
+  }
+  &.low {
+    background: rgba(46, 213, 115, 0.12);
+    color: var(--risk-low);
+  }
+}
