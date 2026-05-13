@@ -27,7 +27,7 @@ import {
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
   PolylineGlowMaterialProperty,
-  Entity,
+  NearFarScalar,
 } from 'cesium';
 
 interface AlertAsteroid {
@@ -98,6 +98,15 @@ export class SpaceMapComponent implements AfterViewInit, OnDestroy {
   private clockInterval?: ReturnType<typeof setInterval>;
   private trailEntityIds: string[] = [];
 
+  constructor() {
+    // effect() MUST be in injection context (constructor or field initializer)
+    effect(() => {
+      const items = this.feed();
+      if (!this.viewer || items.length === 0) return;
+      this.zone.runOutsideAngular(() => this.renderAsteroids(items));
+    });
+  }
+
   ngAfterViewInit(): void {
     Ion.defaultAccessToken = environment.cesiumIonToken;
 
@@ -115,18 +124,37 @@ export class SpaceMapComponent implements AfterViewInit, OnDestroy {
         navigationHelpButton: false,
       });
 
-      // Optional scene settings — guarded against undefined
       try {
-        (this.viewer as any).scene.skyAtmosphere.show = true;
-        (this.viewer as any).scene.fog.enabled = true;
-        (this.viewer as any).scene.fog.density = 2e-4;
-        (this.viewer as any).scene.globe.enableLighting = true;
-      } catch (_) { /* viewer not ready */ }
+        const scene = (this.viewer as any).scene;
+        const globe = scene.globe;
 
-      // Initial camera
+        // Atmosphere & lighting
+        scene.skyAtmosphere.show = true;
+        scene.fog.enabled = true;
+        scene.fog.density = 2e-4;
+        globe.enableLighting = true;
+
+        // ── Quality upgrades ─────────────────────────────────────
+        // Load tiles at 2× detail (default = 2, lower = sharper)
+        globe.maximumScreenSpaceError = 1;
+        // Use full device pixel ratio (retina / HiDPI sharpness)
+        this.viewer!.resolutionScale = Math.min(window.devicePixelRatio || 1, 2);
+        // 4× MSAA — eliminates jagged edges on globe limb
+        scene.msaaSamples = 4;
+        // Sharper star field
+        scene.skyBox.show = true;
+        // Depth-test off — prevents labels/points clipping into the globe surface
+        globe.depthTestAgainstTerrain = false;
+      } catch (_) { /* scene not ready */ }
+
+      // Start zoomed out showing Earth clearly
       this.viewer.camera.setView({
-        destination: Cartesian3.fromDegrees(-30, 20, 30_000_000),
-        orientation: { heading: 0, pitch: -0.6, roll: 0 },
+        destination: Cartesian3.fromDegrees(0, 0, 25_000_000),
+        orientation: {
+          heading: 0,
+          pitch: -Math.PI / 2, // looking straight down at Earth
+          roll: 0,
+        },
       });
 
       this.setupClickHandler();
@@ -134,17 +162,16 @@ export class SpaceMapComponent implements AfterViewInit, OnDestroy {
 
     // Clock tick for HUD
     this.clockInterval = setInterval(() => {
-      this.zone.run(() => this.now.set(new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC'));
+      this.now.set(new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC');
     }, 1000);
     this.now.set(new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC');
-
-    // React to feed signal — render asteroids when data arrives
-    effect(() => {
-      const items = this.feed();
-      if (!this.viewer || items.length === 0) return;
-      this.zone.runOutsideAngular(() => this.renderAsteroids(items));
-    });
   }
+
+  // Scale factor: actual positions are in metres (geocentric).
+  // Nearest asteroid is ~34 LD ≈ 13 billion m — way outside camera view.
+  // We scale by 0.001 so that 1 LD (384 Mm) → 384 km above surface,
+  // which is clearly visible from the 25 Mm altitude camera.
+  private readonly DISPLAY_SCALE = 0.001;
 
   private renderAsteroids(items: FeedItem[]): void {
     if (!this.viewer) return;
@@ -154,31 +181,43 @@ export class SpaceMapComponent implements AfterViewInit, OnDestroy {
       .forEach(e => this.viewer!.entities.remove(e));
 
     items.forEach(item => {
-      const radius = Math.max(80_000, (item.est_diameter_max_m ?? 100) * 100);
       const color = this.colorForRisk(item.risk_score);
-      const position = new Cartesian3(item.position.x, item.position.y, item.position.z);
-      const glowMultiplier = item.risk_score >= 80 ? 3 : item.risk_score >= 50 ? 2.2 : 1.5;
+      // Scale position so asteroids are visible near Earth in the view
+      const position = new Cartesian3(
+        item.position.x * this.DISPLAY_SCALE,
+        item.position.y * this.DISPLAY_SCALE,
+        item.position.z * this.DISPLAY_SCALE,
+      );
 
-      // Glow halo — added FIRST so it renders behind
+      // Pixel size based on estimated diameter — small and realistic
+      // A 500m asteroid → 5px, a 5km asteroid → 8px, max 14px
+      const diamM = item.est_diameter_max_m ?? 300;
+      const coreSize = Math.min(14, Math.max(4, Math.log10(diamM + 1) * 3));
+      const glowSize  = coreSize * (item.risk_score >= 80 ? 5 : item.risk_score >= 50 ? 4 : 3);
+
+      // Outer glow ring — subtle risk colour, screen-space so always visible
       this.viewer!.entities.add({
         id: `${item.neo_reference_id}-glow`,
         position,
-        ellipsoid: {
-          radii: new Cartesian3(radius * glowMultiplier, radius * glowMultiplier, radius * glowMultiplier),
-          material: color.withAlpha(0.10),
-          outline: false,
+        point: {
+          pixelSize: glowSize,
+          color: color.withAlpha(0.12),
+          outlineWidth: 0,
+          scaleByDistance: new NearFarScalar(1e5, 1.5, 5e7, 0.3),
         } as any,
       });
 
-      // Solid asteroid on top
+      // Core point — bright white/grey like a real sky-survey image
+      // Outline tinted with risk colour for identification
       this.viewer!.entities.add({
         id: item.neo_reference_id,
         position,
-        ellipsoid: {
-          radii: new Cartesian3(radius, radius, radius),
-          material: color.withAlpha(0.85),
-          outline: true,
-          outlineColor: color,
+        point: {
+          pixelSize: coreSize,
+          color: Color.fromCssColorString('#F0F0F0').withAlpha(0.95),
+          outlineColor: color.withAlpha(0.85),
+          outlineWidth: 2,
+          scaleByDistance: new NearFarScalar(1e5, 1.5, 5e7, 0.3),
         } as any,
       });
     });
@@ -199,7 +238,7 @@ export class SpaceMapComponent implements AfterViewInit, OnDestroy {
       if (entity) {
         this.viewer!.flyTo(entity, {
           duration: 2.5,
-          offset: new HeadingPitchRange(0, -0.5, 5_000_000),
+          offset: new HeadingPitchRange(0, -0.5, 500_000),
         });
         this.isZoomed.set(true);
         this.loadTrajectory(neoId);
@@ -210,7 +249,6 @@ export class SpaceMapComponent implements AfterViewInit, OnDestroy {
   }
 
   loadTrajectory(neoId: string): void {
-    // Clear previous trail
     this.trailEntityIds.forEach(id => {
       const e = this.viewer?.entities.getById(id);
       if (e) this.viewer?.entities.remove(e);
@@ -220,35 +258,90 @@ export class SpaceMapComponent implements AfterViewInit, OnDestroy {
     this.api.getTrajectory(neoId).subscribe({
       next: (traj) => {
         if (!this.viewer || traj.points.length < 2) return;
-        const positions = traj.points.map(p => new Cartesian3(p.x, p.y, p.z));
+        const positions = traj.points.map(p => new Cartesian3(
+          p.x * this.DISPLAY_SCALE,
+          p.y * this.DISPLAY_SCALE,
+          p.z * this.DISPLAY_SCALE,
+        ));
         const item = this.feed().find(f => f.neo_reference_id === neoId);
         const color = item ? this.colorForRisk(item.risk_score) : Color.fromCssColorString('#4F8EF7');
 
+        // Current display position of the asteroid dot
+        const dotPos = item ? new Cartesian3(
+          item.position.x * this.DISPLAY_SCALE,
+          item.position.y * this.DISPLAY_SCALE,
+          item.position.z * this.DISPLAY_SCALE,
+        ) : null;
+
+        // Find nearest trajectory point to the dot position
+        const nearestTrajPoint = dotPos
+          ? positions.reduce((best, p) => {
+              const dx = p.x - dotPos.x, dy = p.y - dotPos.y, dz = p.z - dotPos.z;
+              const dist = dx*dx + dy*dy + dz*dz;
+              const bdx = best.p.x - dotPos.x, bdy = best.p.y - dotPos.y, bdz = best.p.z - dotPos.z;
+              const bestDist = bdx*bdx + bdy*bdy + bdz*bdz;
+              return dist < bestDist ? { p, dist } : best;
+            }, { p: positions[0], dist: Infinity }).p
+          : null;
+
         this.zone.runOutsideAngular(() => {
+          // Main trajectory arc — glowing orbital path
           const trailId = `${neoId}-trail`;
           this.viewer!.entities.add({
             id: trailId,
             polyline: {
               positions,
-              width: 2,
+              width: 3,
               material: new PolylineGlowMaterialProperty({
-                glowPower: 0.15,
-                color: color.withAlpha(0.4),
+                glowPower: 0.25,
+                color: color.withAlpha(0.55),
               }),
+              clampToGround: false,
             } as any,
           });
           this.trailEntityIds.push(trailId);
+
+          // Faint white core line for crispness
+          const coreId = `${neoId}-trail-core`;
+          this.viewer!.entities.add({
+            id: coreId,
+            polyline: {
+              positions,
+              width: 1,
+              material: Color.WHITE.withAlpha(0.25),
+              clampToGround: false,
+            } as any,
+          });
+          this.trailEntityIds.push(coreId);
+
+          // Connector: thin dashed line from asteroid dot → nearest orbit point
+          if (dotPos && nearestTrajPoint) {
+            const connId = `${neoId}-connector`;
+            this.viewer!.entities.add({
+              id: connId,
+              polyline: {
+                positions: [dotPos, nearestTrajPoint],
+                width: 1,
+                material: color.withAlpha(0.45),
+                clampToGround: false,
+              } as any,
+            });
+            this.trailEntityIds.push(connId);
+          }
         });
       },
-      error: () => { /* trajectory not always available */ }
+      error: () => { /* trajectory may not be available */ }
     });
   }
 
   flyHome(): void {
-    this.viewer?.camera.flyTo({
-      destination: Cartesian3.fromDegrees(-30, 20, 30_000_000),
-      orientation: { heading: 0, pitch: -0.6, roll: 0 },
-      duration: 2,
+    // All Cesium camera ops must run outside Angular zone
+    this.zone.runOutsideAngular(() => {
+      this.viewer?.camera.flyTo({
+        destination: Cartesian3.fromDegrees(0, 20, 25_000_000),
+        orientation: { heading: 0, pitch: -Math.PI / 2, roll: 0 },
+        duration: 2.0,
+      });
     });
     this.isZoomed.set(false);
   }

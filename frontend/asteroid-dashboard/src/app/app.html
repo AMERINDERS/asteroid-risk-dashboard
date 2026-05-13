@@ -24,7 +24,7 @@
           [routerLinkActiveOptions]="{ exact: item.route === '/' }"
           class="nav-item"
         >
-          <lucide-icon [name]="item.icon" size="18"></lucide-icon>
+          <lucide-icon [img]="item.icon" size="18"></lucide-icon>
           <span>{{ item.label }}</span>
           @if (item['badge']) {
             <span class="nav-badge">{{ item['badge'] }}</span>

@@ -7,8 +7,8 @@ import {
   AlertTriangle,
   Compass,
   BarChart3,
-  Bell,
   Settings,
+  LucideIconData,
 } from 'lucide-angular';
 
 @Component({
@@ -19,13 +19,13 @@ import {
   styleUrl: './app.scss',
 })
 export class App {
-  readonly icons = { Globe, Activity, AlertTriangle, Compass, BarChart3, Bell, Settings };
+  readonly icons = { Settings };
 
-  navItems = [
-    { route: '/',          icon: 'Activity',      label: 'Overview' },
-    { route: '/globe',     icon: 'Globe',         label: 'Orbital map' },
-    { route: '/threats',   icon: 'AlertTriangle', label: 'Threats', badge: 15 },
-    { route: '/sentry',    icon: 'Compass',       label: 'Sentry watchlist' },
-    { route: '/analytics', icon: 'BarChart3',     label: 'Analytics' },
+  navItems: { route: string; icon: LucideIconData; label: string; badge?: number }[] = [
+    { route: '/',          icon: Activity,      label: 'Overview' },
+    { route: '/globe',     icon: Globe,         label: 'Orbital map' },
+    { route: '/threats',   icon: AlertTriangle, label: 'Threats', badge: 15 },
+    { route: '/sentry',    icon: Compass,       label: 'Sentry watchlist' },
+    { route: '/analytics', icon: BarChart3,     label: 'Analytics' },
   ];
 }

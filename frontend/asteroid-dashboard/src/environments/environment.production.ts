@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   apiUrl: 'https://asteroid-api.onrender.com',
-  cesiumIonToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YjQyYzQ4NS05YjI4LTRhZWQtYjQzZC1kOGE3YzBmMTA0ZTYiLCJpZCI6MjkzMTc5LCJpYXQiOjE3NDY0OTM4OTl9.9Fag0UKrVoH1TjXY6RoV7oUOJQY5EKrq3Gg3gqXc3sA',
+  cesiumIonToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0ZGMxZDRlYS04Y2VjLTQ5ZDktYTRmNi02ZWJhY2UzZTY3NGUiLCJpZCI6NDI5NDc3LCJzdWIiOiJBbWVyaW5kZXIiLCJpc3MiOiJodHRwczovL2lvbi5jZXNpdW0uY29tIiwiYXVkIjoiQW1lcmluZGVyX2RlZmF1bHQiLCJpYXQiOjE3Nzg2NDA0MDB9.aSMhbvfrciQkhp5A67wXMAc8pkZnO_q3cgR7jumvLf4',
 };
