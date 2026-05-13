@@ -1,5 +1,9 @@
 .overview {
   max-width: 1400px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 }
 
 .page-title {
@@ -9,6 +13,11 @@
   color: var(--text-primary);
   letter-spacing: -0.02em;
   margin: 0 0 var(--space-6) 0;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+    margin-bottom: var(--space-4);
+  }
 }
 
 .section {

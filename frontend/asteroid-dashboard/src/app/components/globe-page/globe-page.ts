@@ -37,6 +37,22 @@ import { DetailPanelComponent } from '../detail-panel/detail-panel';
       border-left: 1px solid var(--border-1);
       padding: var(--space-4);
     }
+    @media (max-width: 768px) {
+      .globe-layout {
+        flex-direction: column;
+        height: calc(100dvh - 56px - 60px);
+      }
+      .globe-main {
+        flex: 0 0 55%;
+      }
+      .globe-panel {
+        width: 100%;
+        flex: 1;
+        border-left: none;
+        border-top: 1px solid var(--border-1);
+        padding: var(--space-3);
+      }
+    }
   `],
 })
 export class GlobePageComponent {

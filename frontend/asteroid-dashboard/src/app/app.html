@@ -37,4 +37,18 @@
   <main class="content">
     <router-outlet />
   </main>
+
+  <nav class="bottom-nav">
+    @for (item of navItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+        class="bottom-nav-item"
+      >
+        <lucide-icon [img]="item.icon" size="20"></lucide-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
 </div>

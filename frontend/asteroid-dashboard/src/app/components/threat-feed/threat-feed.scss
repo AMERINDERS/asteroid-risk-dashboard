@@ -3,6 +3,11 @@
   border: 1px solid var(--border-1);
   border-radius: var(--radius-md);
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .threat-table {
@@ -23,6 +28,11 @@
       text-align: left;
       border-bottom: 1px solid var(--border-1);
       font-weight: 500;
+
+      @media (max-width: 768px) {
+        padding: var(--space-2) var(--space-3);
+        font-size: 10px;
+      }
     }
 
     td {
@@ -30,6 +40,12 @@
       border-bottom: 1px solid var(--border-1);
       color: var(--text-primary);
       font-size: 13px;
+
+      @media (max-width: 768px) {
+        padding: var(--space-2) var(--space-3);
+        font-size: 12px;
+        white-space: nowrap;
+      }
     }
 
     tr:hover td {
