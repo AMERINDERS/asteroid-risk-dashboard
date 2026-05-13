@@ -19,6 +19,7 @@ app = FastAPI(
 ALLOWED_ORIGINS = [
     'http://localhost:4200',
     'http://localhost:4201',
+    'https://asteroid-risk-dashboard.vercel.app',
     os.getenv('FRONTEND_URL', ''),
 ]
 
