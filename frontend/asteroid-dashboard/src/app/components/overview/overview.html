@@ -1,0 +1,12 @@
+<div class="overview">
+  <h1 class="page-title">Overview</h1>
+  <app-stat-cards></app-stat-cards>
+
+  <div class="section">
+    <h2 class="section-title">Threat Feed</h2>
+    <p class="section-desc">
+      Asteroids approaching Earth in the next 30 days, sorted by risk score.
+    </p>
+    <app-threat-feed (asteroidSelected)="onAsteroidSelected($event)"></app-threat-feed>
+  </div>
+</div>

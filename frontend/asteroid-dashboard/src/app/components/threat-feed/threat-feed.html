@@ -1,0 +1,49 @@
+<div class="threat-feed">
+  <table mat-table [dataSource]="feed()" class="threat-table">
+
+    <!-- Rank Column -->
+    <ng-container matColumnDef="rank">
+      <th mat-header-cell *matHeaderCellDef>#</th>
+      <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let element">
+        <button class="name-btn" (click)="onSelect(element.neo_reference_id)">
+          {{ element.name }}
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Miss Distance Column -->
+    <ng-container matColumnDef="miss">
+      <th mat-header-cell *matHeaderCellDef>Miss Distance</th>
+      <td mat-cell *matCellDef="let element">
+        <span class="mono">{{ element.miss_distance_lunar.toFixed(2) }} LD</span>
+      </td>
+    </ng-container>
+
+    <!-- Velocity Column -->
+    <ng-container matColumnDef="velocity">
+      <th mat-header-cell *matHeaderCellDef>Velocity</th>
+      <td mat-cell *matCellDef="let element">
+        <span class="mono">{{ element.velocity_kms.toFixed(0) }} km/s</span>
+      </td>
+    </ng-container>
+
+    <!-- Risk Column -->
+    <ng-container matColumnDef="risk">
+      <th mat-header-cell *matHeaderCellDef>Risk</th>
+      <td mat-cell *matCellDef="let element">
+        <span [ngClass]="'risk-badge ' + riskClass(element.risk_score)">
+          {{ element.risk_score.toFixed(1) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
