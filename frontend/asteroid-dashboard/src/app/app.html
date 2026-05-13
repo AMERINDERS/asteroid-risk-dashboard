@@ -1,13 +1,18 @@
 <div class="shell">
   <header class="topbar">
-    <a class="brand" routerLink="/">
-      <span class="brand-mark"></span>
-      <span class="brand-name">AsteroidRisk</span>
-    </a>
+    <div class="topbar-start">
+      <button class="hamburger-btn" (click)="navOpen.update(v => !v)" aria-label="Toggle navigation">
+        <lucide-icon [img]="icons.Menu" size="20"></lucide-icon>
+      </button>
+      <a class="brand" routerLink="/">
+        <span class="brand-mark"></span>
+        <span class="brand-name">AsteroidRisk</span>
+      </a>
+    </div>
     <div class="topbar-meta">
       <span class="live-indicator">
         <span class="live-dot"></span>
-        Live · updated 3 min ago
+        <span class="live-text">Live · updated 3 min ago</span>
       </span>
       <button class="icon-btn" aria-label="Settings">
         <lucide-icon [img]="icons.Settings" size="18"></lucide-icon>
@@ -15,40 +20,24 @@
     </div>
   </header>
 
-  <aside class="sidebar">
-    <nav>
-      @for (item of navItems; track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-          class="nav-item"
-        >
-          <lucide-icon [img]="item.icon" size="18"></lucide-icon>
-          <span>{{ item.label }}</span>
-          @if (item['badge']) {
-            <span class="nav-badge">{{ item['badge'] }}</span>
-          }
-        </a>
-      }
-    </nav>
-  </aside>
-
-  <main class="content">
-    <router-outlet />
-  </main>
-
-  <nav class="bottom-nav">
+  <nav class="subnav" [class.open]="navOpen()">
     @for (item of navItems; track item.route) {
       <a
         [routerLink]="item.route"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-        class="bottom-nav-item"
+        class="subnav-item"
       >
-        <lucide-icon [img]="item.icon" size="20"></lucide-icon>
+        <lucide-icon [img]="item.icon" size="16"></lucide-icon>
         <span>{{ item.label }}</span>
+        @if (item['badge']) {
+          <span class="nav-badge">{{ item['badge'] }}</span>
+        }
       </a>
     }
   </nav>
+
+  <main class="content" [class.globe-view]="isGlobeView()">
+    <router-outlet />
+  </main>
 </div>

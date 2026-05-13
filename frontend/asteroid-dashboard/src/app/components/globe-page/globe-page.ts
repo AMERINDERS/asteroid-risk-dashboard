@@ -22,7 +22,7 @@ import { DetailPanelComponent } from '../detail-panel/detail-panel';
     :host { display: block; height: 100%; }
     .globe-layout {
       display: flex;
-      height: calc(100vh - 56px);
+      height: 100%;
       gap: 0;
     }
     .globe-main {
@@ -38,13 +38,8 @@ import { DetailPanelComponent } from '../detail-panel/detail-panel';
       padding: var(--space-4);
     }
     @media (max-width: 768px) {
-      .globe-layout {
-        flex-direction: column;
-        height: calc(100dvh - 56px - 60px);
-      }
-      .globe-main {
-        flex: 0 0 55%;
-      }
+      .globe-layout { flex-direction: column; }
+      .globe-main { flex: 0 0 55%; }
       .globe-panel {
         width: 100%;
         flex: 1;
