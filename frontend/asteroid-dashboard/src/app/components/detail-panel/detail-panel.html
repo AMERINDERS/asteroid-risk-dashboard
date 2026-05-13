@@ -1,0 +1,103 @@
+@if (asteroidId()) {
+  <div class="panel">
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <span>Loading asteroid data…</span>
+      </div>
+    } @else if (detail()) {
+      <div class="panel-header">
+        <div>
+          <div class="panel-name">{{ detail()!.name }}</div>
+          <div class="panel-id">{{ detail()!.neo_reference_id }}</div>
+        </div>
+        <span [class]="'risk-badge ' + riskClass(detail()!.risk_breakdown.total)">
+          {{ riskLabel(detail()!.risk_breakdown.total) }}
+        </span>
+      </div>
+
+      <!-- Risk breakdown bar -->
+      <div class="section">
+        <div class="section-label">Risk Score</div>
+        <div class="risk-total">
+          <span class="mono">{{ detail()!.risk_breakdown.total.toFixed(1) }}</span>
+          <span class="risk-out">/100</span>
+        </div>
+        <div class="risk-bar-track">
+          <div class="risk-bar-fill" [style.width.%]="detail()!.risk_breakdown.total"></div>
+        </div>
+        <div class="breakdown-rows">
+          <div class="breakdown-row">
+            <span>Miss distance</span>
+            <span class="mono">{{ detail()!.risk_breakdown.miss_distance_score.toFixed(1) }}</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Diameter</span>
+            <span class="mono">{{ detail()!.risk_breakdown.diameter_score.toFixed(1) }}</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Velocity</span>
+            <span class="mono">{{ detail()!.risk_breakdown.velocity_score.toFixed(1) }}</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Hazard flag</span>
+            <span class="mono">{{ detail()!.risk_breakdown.hazard_flag_score.toFixed(1) }}</span>
+          </div>
+          @if (detail()!.risk_breakdown.sentry_bonus > 0) {
+            <div class="breakdown-row sentry">
+              <span>Sentry bonus</span>
+              <span class="mono">+{{ detail()!.risk_breakdown.sentry_bonus.toFixed(1) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Physical properties -->
+      <div class="section">
+        <div class="section-label">Physical Properties</div>
+        <div class="prop-rows">
+          @if (detail()!.abs_magnitude !== null) {
+            <div class="prop-row">
+              <span>Abs. magnitude</span>
+              <span class="mono">{{ detail()!.abs_magnitude }}</span>
+            </div>
+          }
+          @if (detail()!.est_diameter_min_m !== null) {
+            <div class="prop-row">
+              <span>Diameter (est.)</span>
+              <span class="mono">
+                {{ detail()!.est_diameter_min_m!.toFixed(0) }}–{{ detail()!.est_diameter_max_m!.toFixed(0) }} m
+              </span>
+            </div>
+          }
+          <div class="prop-row">
+            <span>Potentially hazardous</span>
+            <span [class]="detail()!.is_potentially_hazardous ? 'badge-yes' : 'badge-no'">
+              {{ detail()!.is_potentially_hazardous ? 'Yes' : 'No' }}
+            </span>
+          </div>
+          <div class="prop-row">
+            <span>Sentry object</span>
+            <span [class]="detail()!.is_sentry_object ? 'badge-yes' : 'badge-no'">
+              {{ detail()!.is_sentry_object ? 'Yes' : 'No' }}
+            </span>
+          </div>
+          @if (detail()!.sentry_impact_probability !== null) {
+            <div class="prop-row">
+              <span>Impact probability</span>
+              <span class="mono">{{ detail()!.sentry_impact_probability }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- JPL link -->
+      @if (detail()!.nasa_jpl_url) {
+        <a class="jpl-link" [href]="detail()!.nasa_jpl_url" target="_blank" rel="noopener">
+          <lucide-icon [img]="icons.ExternalLink" size="14"></lucide-icon>
+          View on NASA JPL
+        </a>
+      }
+    }
+  </div>
+}

@@ -1,0 +1,56 @@
+// src/styles/_tokens.scss
+// The design system. Every colour and value the frontend uses lives here.
+:root {
+  // ── Surface (4 levels of darkness) ───────────────────────────
+  --surface-0: #05070F;   // page background
+  --surface-1: #0B0F1E;   // panels, cards
+  --surface-2: #111828;   // hover, table rows
+  --surface-3: #1A2235;   // input backgrounds, selected
+
+  // ── Single dominant accent ────────────────────────────────────
+  --accent: #4F8EF7;                        // sapphire — the ONLY loud colour
+  --accent-soft: rgba(79, 142, 247, 0.12);
+  --accent-border: rgba(79, 142, 247, 0.3);
+
+  // ── Risk colours (used ONLY on risk badges, nowhere else) ────
+  --risk-critical: #FF4757;
+  --risk-high: #FFA832;
+  --risk-medium: #4F8EF7;
+  --risk-low: #2ED573;
+
+  // ── Text hierarchy ────────────────────────────────────────────
+  --text-primary:   rgba(232, 234, 240, 1);
+  --text-secondary: rgba(180, 192, 215, 0.75);
+  --text-tertiary:  rgba(122, 131, 154, 0.65);
+
+  // ── Borders ───────────────────────────────────────────────────
+  --border-1: rgba(255, 255, 255, 0.06);
+  --border-2: rgba(255, 255, 255, 0.12);
+
+  // ── Typography ────────────────────────────────────────────────
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Inter Display', 'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  // ── Spacing scale ─────────────────────────────────────────────
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+  --space-9: 64px;
+
+  // ── Radius ────────────────────────────────────────────────────
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  // ── Motion ────────────────────────────────────────────────────
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast:  150ms;
+  --duration-base:  250ms;
+  --duration-slow:  400ms;
+}
